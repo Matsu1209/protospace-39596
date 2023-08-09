@@ -1,5 +1,5 @@
 class PrototypesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show, :new]
+  skip_before_action :authenticate_user!, only: [:index, :show]
 
   def index
     @prototypes = Prototype.includes(:user)
