@@ -1,5 +1,6 @@
 class PrototypesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show]
+  before_action :move_to_index, except: [:index, :show]
 
   def index
     @prototypes = Prototype.includes(:user)
@@ -14,13 +15,14 @@ class PrototypesController < ApplicationController
 
   def edit
     @prototype = Prototype.find(params[:id])
+    
   end
 
   def update
     @prototype = Prototype.find(params[:id])
     @prototype.update(prototype_params)
     if @prototype.save
-      redirect_to root_path
+      redirect_to prototype_path
     else
       render :edit, status: :unprocessable_entity
     end
@@ -52,5 +54,12 @@ class PrototypesController < ApplicationController
     params.require(:prototype).permit(:title, :catch_copy, :concept, :image)
   end
 
+  def move_to_index
+    access_prototype = Prototype.find(params[:id])
+    unless user_signed_in? && access_prototype.user == current_user
+      redirect_to action: :index
+    end
+  end
+  
 end
 
